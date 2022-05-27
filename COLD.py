@@ -55,4 +55,7 @@ def ColdFeature(img):
     distances = np.array(distances)
     COLD_AVG_DISTANCES = np.average(distances)
 
-    return COLD_AVG_R, COLD_AVG_THETA, COLD_AVG_DISTANCES
+    #Slope of PCA
+    COLD_PCA_SLOPE = math.atan2(X_rec[1][1]-X_rec[0][1], X_rec[1][0]-X_rec[0][0])
+
+    return COLD_AVG_R, COLD_AVG_THETA, COLD_AVG_DISTANCES, COLD_PCA_SLOPE
