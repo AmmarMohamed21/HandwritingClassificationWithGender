@@ -31,31 +31,15 @@ def ColdFeature(img):
     #remove outliers (Points where distance > 12)
     RThetaArray = RThetaArray[RThetaArray[:,0] <= 12]
 
-    #Calculate Average R and Theta
-    COLD_AVG_R, COLD_AVG_THETA = np.average(RThetaArray[:,0]), np.average(RThetaArray[:,1])
+    #Transform from polar to XY
+    XYArray = []
+    for point in RThetaArray:
+        XYArray.append([point[0]*math.cos(point[1]),point[0]*math.sin(point[1])])
 
-    #Apply PCA
-    X = RThetaArray
-    X_norm, mu, sigma = featureNormalize(X)
-    U, S = pca(X_norm)
-    K = 1
-    Z = projectData(X_norm, U, K)
-    X_rec = recoverData(Z, U, K)
+    XYArray = np.array(XYArray)
 
-
-    #Calculate Average Distance between points and X recovered (The most changes direction)
-    diff = X_rec[1] - X_rec[0]
-    norm = np.linalg.norm(X_rec[1]-X_rec[0])
-    distances = []
-    for point in X_norm:
-        distance = np.linalg.norm(np.cross(diff, X_rec[0]-point))/norm
-        distances.append(distance)
-
-    #Average Distances
-    distances = np.array(distances)
-    COLD_AVG_DISTANCES = np.average(distances)
-
-    #Slope of PCA
-    COLD_PCA_SLOPE = math.atan2(X_rec[1][1]-X_rec[0][1], X_rec[1][0]-X_rec[0][0])
-
-    return COLD_AVG_R, COLD_AVG_THETA, COLD_AVG_DISTANCES, COLD_PCA_SLOPE
+    #Calculate 2d Histogram
+    NBINS = 10 
+    COLD_HIST, xedges,yedges= np.histogram2d(XYArray[:,0],XYArray[:,1], NBINS)
+    COLD_HIST = COLD_HIST.flatten().tolist()
+    return COLD_HIST

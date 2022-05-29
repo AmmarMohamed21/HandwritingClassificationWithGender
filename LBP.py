@@ -61,5 +61,5 @@ def extract_lbp(gray_img):
         for j in range(0, width):
              img_lbp[i, j] = calculate_lbp(gray_img, i, j)
     
-    hist_lbp = cv2.calcHist([img_lbp], [0], None, [25], [0, 25])
+    hist_lbp = cv2.calcHist([img_lbp], [0], None, [256], [0, 256]).flatten().tolist()
     return hist_lbp
